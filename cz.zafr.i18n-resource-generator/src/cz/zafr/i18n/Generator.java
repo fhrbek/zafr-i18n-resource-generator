@@ -69,7 +69,7 @@ public class Generator {
 	private static String generateC(Map<String, List<String>> dictionary) {
 		StringBuilder builder = new StringBuilder();
 		StringBuilder summaryBuilder = new StringBuilder("\nconst char** RESOURCES[] = {\n");
-		boolean firstLanguage = true;
+		int langIndex = 0;
 		builder.append("//GENERATED - DO NOT EDIT!\n");
 		builder.append("//i18n resource file\n");
 
@@ -85,20 +85,35 @@ public class Generator {
 			for (String phrase : entry.getValue()) {
 				builder.append(String.format("\nstatic const char %s%d[] PROGMEM = \"%s\";", lang, index, phrase));
 				if (index > 0) {
-					arrayBuilder.append(",\n");
+					arrayBuilder.append(',');
+					if (index % 8 == 0) {
+						arrayBuilder.append('\n');
+					} else {
+						arrayBuilder.append(' ');
+					}
 				}
-				arrayBuilder.append(String.format("  %s%d", lang, index++));
+				if (index % 8 == 0) {
+					arrayBuilder.append("  ");
+				}
+				arrayBuilder.append(String.format("%s%d", lang, index++));
 			}
 			
 			arrayBuilder.append("\n};\n");
 			builder.append(arrayBuilder);
 			
-			if (firstLanguage) {
-				firstLanguage = false;
-			} else {
-				summaryBuilder.append(",\n");
+			if (langIndex > 0) {
+				summaryBuilder.append(',');
+				if (langIndex % 8 == 0) {
+					summaryBuilder.append('\n');
+				} else {
+					summaryBuilder.append(' ');
+				}
 			}
-			summaryBuilder.append("  ");
+			if (index % 8 == 0) {
+				summaryBuilder.append("  ");
+			}
+			langIndex++;
+
 			summaryBuilder.append(lang);
 		}
 

@@ -1,4 +1,4 @@
-<project name="i18n-generator" default="main" basedir=".">
+<project name="i18n-resource-generator" default="main" basedir=".">
 	<description>
 		Create a fat JAR with Ant build script
 	</description>
@@ -20,7 +20,7 @@
 		</fileset>
 	</path>
 
-	<target name="compile" depends="init" description="compile the source ">
+	<target name="compile" depends="init" description="compile the source">
 		<javac includeantruntime="false" srcdir="${src.dir}"
                        destdir="${build.dir}" classpathref="classpath" />
 	</target>
