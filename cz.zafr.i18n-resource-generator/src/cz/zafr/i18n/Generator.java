@@ -2,6 +2,7 @@ package cz.zafr.i18n;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,9 +19,9 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 public class Generator {
 
 	public static void main(String... args) {
-		if (args.length == 1) {
+		if (args.length == 2) {
 			try {
-				generate(args[0]);
+				generate(args[0], args[1]);
 			} catch (EncryptedDocumentException | InvalidFormatException
 					| IOException e) {
 				System.err.println("Unable to open resource file: " + e.getMessage());
@@ -30,8 +31,8 @@ public class Generator {
 		}
 	}
 
-	private static void generate(String path) throws EncryptedDocumentException, InvalidFormatException, IOException {
-		Workbook wb = WorkbookFactory.create(new File(path));
+	private static void generate(String sourcePath, String outputPath) throws EncryptedDocumentException, InvalidFormatException, IOException {
+		Workbook wb = WorkbookFactory.create(new File(sourcePath));
 		Map<String, List<String>> dictionary = new LinkedHashMap<String, List<String>>();
 		String[] languages = new String[0];
 		boolean isHeader = true;
@@ -63,7 +64,9 @@ public class Generator {
 	        break; //process just the first sheet and leave the loop
 	    }
 		
-		System.out.print(generateC(dictionary));
+		PrintWriter pw = new PrintWriter(new File(outputPath), "UTF-8");
+		pw.print(generateC(dictionary));
+		pw.close();
 	}
 
 	private static String generateC(Map<String, List<String>> dictionary) {
@@ -124,7 +127,7 @@ public class Generator {
 	}
 
 	private static void printUsage() {
-		System.out.println("Usage: java -jar i18n-resource-generator.jar <path to resources>");
+		System.out.println("Usage: java -jar i18n-resource-generator.jar <path to resources> <output path>");
 	}
 
 }
